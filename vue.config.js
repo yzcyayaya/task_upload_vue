@@ -24,5 +24,6 @@ module.exports = {
     assetsDir: 'static',
     parallel: false,
     publicPath: './',
-    lintOnSave: false //关闭eslint检查
+    lintOnSave: false ,//关闭eslint检查
+    productionSourceMap:false //隐藏源代码
 }

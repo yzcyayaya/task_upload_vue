@@ -8,40 +8,39 @@
         style="width: 100%"
         :default-sort="{prop: 'date', order: 'descending'}"
         :row-class-name="tableRowClassName"
-        @cell-mouse-enter="clickRow"
     >
       <el-table-column
           prop="create_time"
           label="开始时间"
           sortable
-          width="160">
+          width="">
       </el-table-column>
       <el-table-column
           prop="over_time"
           label="结束时间"
           sortable
           align="center"
-          width="160">
+          width="">
       </el-table-column>
       <el-table-column
           prop="remain_time"
           label="剩余时间"
           sortable
           align="center"
-          width="180"
+          width=""
       >
       </el-table-column>
       <el-table-column
           prop="assignment_name"
           label="任务"
           align="center"
-          width="280">
+          width="">
       </el-table-column>
       <el-table-column
           prop="course_name"
           label="课程名字"
           align="center"
-          width="180">
+          width="">
       </el-table-column>
       <el-table-column
           prop="assignment_describe"
@@ -49,30 +48,34 @@
           show-overflow-tooltip
           header-align="center"
           align="center"
-          width="580">
+          width="">
       </el-table-column>
       <el-table-column
           align="center"
           label="上传文件"
+          width="170"
       >
-        <el-button @click="dialogVisible = true" type="info" size="mini">选择</el-button>
+        <template slot-scope="scope">
+          <el-button @click="dialogVisible = true;clickRow(scope.row)" type="info" size="mini">选择</el-button>
+        </template>
       </el-table-column>
       <el-table-column
           prop="assignment_id"
           align="center"
           label="任务操作">
-        <div class="el-row--flex">
-          <el-button size="mini" style="margin-left:1px;" type="primary" @click="downByTaskAll">下载</el-button>
-          <el-button size="mini" style="margin-left:1px;" type="warning" @click="editDialog=true">编辑</el-button>
-          <el-button size="mini" style="margin-left:1px;" @click="handleDelete" type="danger">删除</el-button>
-        </div>
+        <template slot-scope="scope">
+          <div class="el-row--flex" @click="clickRow(scope.row)">
+            <el-button size="mini" style="margin-left:1px;" type="primary" @click="downByTaskAll(scope.row)">下载</el-button>
+            <el-button size="mini" style="margin-left:1px;" type="warning" @click="editDialog=true">编辑</el-button>
+            <el-button size="mini" style="margin-left:1px;" @click="handleDelete" type="danger">删除</el-button>
+          </div>
+        </template>
       </el-table-column>
     </el-table>
     <el-dialog
         title="提示(文件不超过50MB)"
         :visible.sync="dialogVisible"
-        width="30%"
-        :before-close="handleClose">
+        width="30%">
       <UploadTask
           :course_name="this.rowData.course_name"
           :object_dir="this.rowData.assignment_name"
@@ -80,7 +83,7 @@
       ></UploadTask>
       <span slot="footer" class="dialog-footer">
 <!--          <el-button @click="dialogVisible = false">取 消</el-button>-->
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button  @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
     <div class="page-header">
@@ -91,7 +94,7 @@
           :page-size="10"
           align="center"
           layout="prev, pager, next, jumper"
-          :total="1000">
+          :total="pageUtil.total">
       </el-pagination>
     </div>
     <el-dialog
@@ -102,7 +105,7 @@
         center>
       <el-form ref="form" :model="form" label-width="80px">
 
-        <el-form-item label="课程名字"  :change="test" :rules="[{required: true, message: '课程名字不能为空'}]">
+        <el-form-item label="课程名字"   :rules="[{required: true, message: '课程名字不能为空'}]">
           <el-select v-model="form.course_id" placeholder="请选择">
             <el-option
                 v-for="item in courses"
@@ -179,14 +182,18 @@ export default {
   name: 'ConductTask',
   components: {UploadTask},
   methods: {
-    test(){
-      console.log("选择的id" + this.form.course_id);
-    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+      this.$axios.get("api/v1/task/assignment?start_page="+ (val*10-9) +"&size_page=10"
+      ).then((response) => {
+            console.log(response.data.data)
+            this.tableData = response.data.data.item
+            this.pageUtil.total = response.data.data.total
+          }
+      )
     },
     tableRowClassName({row, rowIndex}) {
       // console.log(row)
@@ -244,8 +251,8 @@ export default {
       })
     },
     //下载当前任务下所有提交文件并打包压缩
-    downByTaskAll() {
-      window.open(this.$axios.Url + "api/v1/task/downFiles" + '?' + 'object_name=' + this.rowData.course_name + "/" + this.rowData.assignment_name + '&bucket_name=' + this.rowData.school_year)
+    downByTaskAll(row) {
+      window.open(this.$axios.Url + "api/v1/task/downFiles" + '?' + 'object_name=' + row.course_name + "/" + row.assignment_name + '&bucket_name=' + row.school_year)
     },
     clickRow(row) {
       this.rowData.assignment_id = row.assignment_id
@@ -399,7 +406,7 @@ export default {
   updated() {
     this.countDown();
   },
-  beforeCreate() {
+  created() {
     //任务list
     this.$axios.get("api/v1/task/assignment"
     ).then((response) => {
@@ -421,9 +428,9 @@ export default {
   /*position: absolute;*/
   /*margin-top: 600px;*/
   position: fixed;
-  left: 40%;
+  left: 50%;
   bottom: 3%;
-  transform: translate(–50%);
+  transform: translate(-50%);
 }
 
 .el-table .warning-row {

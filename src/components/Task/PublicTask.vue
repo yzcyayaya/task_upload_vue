@@ -64,53 +64,6 @@
           </el-menu-item>
         </template>
       </template>
-
-
-      <!-- 遍历菜单 -->
-      <!--      <template v-for="item in menuList">-->
-      <!--        &lt;!&ndash; 含有子菜单 &ndash;&gt;-->
-      <!--        <template v-if="item.children">-->
-      <!--          &lt;!&ndash; 第一层 含有子菜单菜单 &ndash;&gt;-->
-      <!--          <el-submenu :index="item.index" :key="item.index">-->
-      <!--            <template slot="title">-->
-      <!--              <i ></i>-->
-      <!--              <span slot="title">{{ item.title }}</span>-->
-      <!--            </template>-->
-      <!--            <menu-list :items="item.children"></menu-list>&lt;!&ndash;递归调用&ndash;&gt;-->
-      <!--            &lt;!&ndash; 只能单开 unique-opened &ndash;&gt;-->
-      <!--            <menu-list :items="menuList" :isCollapse="isCollapse"></menu-list>&lt;!&ndash; 更改菜单为组件递归模式 &ndash;&gt;-->
-      <!--          </el-submenu>-->
-      <!--        </template>-->
-
-      <!-- 第一层 不含子菜单  -->
-      <!--        <template v-else>-->
-      <!--          <el-menu-item :index="item.index" :key="item.index">-->
-      <!--            <i></i>-->
-      <!--            <span slot="title">{{ item.title }}</span>-->
-      <!--          </el-menu-item>-->
-      <!--        </template>-->
-      <!--      </template>-->
-
-
-      <!-------------------------------------------------------------->
-      <!--      <template v-for="submenu in menuList">-->
-      <!--        <el-submenu :index="submenu.index" :key="submenu.index">-->
-      <!--          <template slot="title"> {{ submenu.title }} </template>-->
-      <!--          <template v-for="menu in submenu.children">-->
-      <!--            &lt;!&ndash; 添加标签页的方法 addTab() &ndash;&gt;-->
-      <!--            <el-menu-item-->
-      <!--                :index="menu.index"-->
-      <!--                :key="menu.index"-->
-      <!--                @click="addTab(menu)"-->
-      <!--            >-->
-      <!--              {{ menu.title }}-->
-      <!--            </el-menu-item>-->
-      <!--          </template>-->
-      <!--        </el-submenu>-->
-      <!--      </template>-->
-      <!--    <el-menu-item index="3" disabled>消息中心</el-menu-item>-->
-      <!--    <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>-->
-
     </el-menu>
     <el-tabs @tab-click="handleClick" v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
       <el-tab-pane
@@ -119,12 +72,11 @@
           :label="item.title"
           :name="item.name"
       >
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
       </el-tab-pane>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </el-tabs>
-
 
   </div>
 
@@ -145,15 +97,10 @@ export default {
         name: '1',
         route: '/publicTask/conductTask'
       }, {
-        title: '操作系统',
-        name: '2-1-1',
-        route: '/publicTask/test'
-      }, {
-        title: '数据结构',
-        name: '2-1-2',
-        route: '/publicTask/test2'
-      }
-      ],
+        title: '课程中心',
+        name: '3',
+        route: '/publicTask/course'
+      }],
       tabIndex: 2,
       activeIndex: '1',
       activeName: 'first',
@@ -171,60 +118,60 @@ export default {
           index: '3',
           route: '/publicTask/course'
         },
-        {
-          title: '查看课程',
-          index: '2',
-          route: '',
-          children: [{
-            title: '第一学期',
-            index: '2-1',
-            children: [{
-              index: '2-1-1',
-              title: '操作系统',
-              route: '/publicTask/test'
-            }, {
-              index: '2-1-2',
-              title: '数据结构',
-              route: '/publicTask/test2'
-            }, {
-              index: '2-1-3',
-              title: '数据库原理',
-              route: ''
-            }
-            ]
-          },
-            {
-              title: '选项2',
-              index: '2-2',
-              route: ''
-            },
-            {
-              title: '选项3',
-              index: '2-3',
-              route: ''
-            },
-            {
-              title: '选项4',
-              index: '2-4',
-              route: '',
-              children: [
-                {
-                  index: '2-4-1',
-                  title: '选项1',
-                  route: ''
-                }, {
-                  index: '2-4-2',
-                  title: '选项2',
-                  route: ''
-                }, {
-                  index: '2-4-3',
-                  title: '选项3',
-                  route: '',
-                }
-              ]
-            }
-          ]
-        },
+        // {
+        //   title: '查看课程',
+        //   index: '2',
+        //   route: '',
+        //   children: [{
+        //     title: '第一学期',
+        //     index: '2-1',
+        //     children: [{
+        //       index: '2-1-1',
+        //       title: '操作系统',
+        //       route: '/publicTask/test'
+        //     }, {
+        //       index: '2-1-2',
+        //       title: '数据结构',
+        //       route: '/publicTask/test2'
+        //     }, {
+        //       index: '2-1-3',
+        //       title: '数据库原理',
+        //       route: ''
+        //     }
+        //     ]
+        //   },
+        //     {
+        //       title: '选项2',
+        //       index: '2-2',
+        //       route: ''
+        //     },
+        //     {
+        //       title: '选项3',
+        //       index: '2-3',
+        //       route: ''
+        //     },
+        //     {
+        //       title: '选项4',
+        //       index: '2-4',
+        //       route: '',
+        //       children: [
+        //         {
+        //           index: '2-4-1',
+        //           title: '选项1',
+        //           route: ''
+        //         }, {
+        //           index: '2-4-2',
+        //           title: '选项2',
+        //           route: ''
+        //         }, {
+        //           index: '2-4-3',
+        //           title: '选项3',
+        //           route: '',
+        //         }
+        //       ]
+        //     }
+        //   ]
+        // },
 
       ]
     }
@@ -304,9 +251,6 @@ export default {
       this.editableTabs = tabs.filter(tab => tab.name !== targetName);
       console.log(this.editableTabs)
       // this.addTab(title, activeName, route);
-    },
-    index1Select() {
-
     },
   }
 }

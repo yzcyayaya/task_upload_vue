@@ -1,19 +1,15 @@
 <template>
   <div>
-    <div align="right">
-      <el-button type="success" @click="next">下一步</el-button>
-    </div>
     <el-steps :active="active" finish-status="success" simple>
-      <el-step title="1 找到对应课程" icon="el-icon-edit"></el-step>
-      <el-step title="2 选择文件" icon="el-icon-upload"></el-step>
-      <el-step title="3 点击上传服务器" icon="el-icon-success"></el-step>
+      <el-step title="1.找到对应课程" icon="el-icon-search"></el-step>
+      <el-step title="2.选择文件" icon="el-icon-notebook-1"></el-step>
+      <el-step title="3.点击上传文件" icon="el-icon-upload"></el-step>
     </el-steps>
     <el-table
         :data="tableData"
         style="width: 100%"
         :default-sort="{prop: 'date', order: 'descending'}"
         :row-class-name="tableRowClassName"
-        @cell-mouse-enter="clickRow"
     >
       <el-table-column
           prop="create_time"
@@ -60,23 +56,27 @@
           label="上传文件"
           width="170"
       >
-        <el-button @click="dialogVisible = true" type="primary" size="mini">选择</el-button>
-        <el-button @click="upPersons" type="info" size="mini">查看提交</el-button>
+        <template slot-scope="scope">
+            <el-button @click="dialogVisible = true; active=1;clickRow(scope.row);" type="primary" size="mini">选择</el-button>
+            <el-button @click="viewUpPerson = true;upPersons(scope.row)" type="info" size="mini">查看提交</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <el-dialog
         title="提示(文件名: 班级+名字+学号)"
         :visible.sync="dialogVisible"
-        width="30%"
-        :before-close="handleClose">
-      <UploadTask
-          :course_name="this.rowData.course_name"
-          :object_dir="this.rowData.assignment_name"
-          :school_year="this.rowData.school_year"
-      ></UploadTask>
-      <span slot="footer" class="dialog-footer">
+        width="30%">
+        <UploadTask
+            @setActive="setActive"
+            :course_name="this.rowData.course_name"
+            :object_dir="this.rowData.assignment_name"
+            :school_year="this.rowData.school_year"
+            :active = this.active
+        ></UploadTask>
+        <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
       </span>
+
     </el-dialog>
     <el-dialog
         :visible.sync="viewUpPerson"
@@ -131,7 +131,9 @@
       </el-pagination>
     </div>
   </div>
+
 </template>
+
 
 <script>
 
@@ -141,9 +143,13 @@ export default {
   name: 'ConductTask',
   components: {UploadTask},
   methods: {
-    upPersons() {
-      this.viewUpPerson = true;
-      this.$axios.get("api/v1/task/getNotUploadStudents" + "?bucket_name=" + this.rowData.school_year + "&object_name=" + this.rowData.course_name + "/" + this.rowData.assignment_name)
+    //子组件改变父组件值 活跃
+    setActive(active){
+      this.active = active
+      console.log(active)
+    },
+    upPersons(row) {
+      this.$axios.get("api/v1/task/getNotUploadStudents" + "?bucket_name=" + row.school_year + "&object_dir=" + row.course_name + "/" + row.assignment_name)
           .then((r) => {
             this.upPerson = r.data.data
             console.log(this.upPerson)
@@ -226,6 +232,7 @@ export default {
       this.rowData.course_name = row.course_name
       this.rowData.assignment_describe = row.assignment_describe
       this.rowData.school_year = row.school_year
+      console.log(row)
     },
     next() {
       if (this.active++ > 2) this.active = 0;
@@ -342,9 +349,9 @@ export default {
   /*position: absolute;*/
   /*margin-top: 600px;*/
   position: fixed;
-  left: 40%;
+  left: 50%;
   bottom: 3%;
-  transform: translate(–50%);
+  transform: translate(-50%);
 }
 
 .el-table .warning-row {
